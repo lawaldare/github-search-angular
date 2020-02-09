@@ -11,7 +11,18 @@ export class GithubComponent implements OnInit {
 
   user: any;
   repos: any;
-  username: any;
+
+  private _username: string;
+
+  get username(): string {
+    return this._username;
+  }
+
+  set username(value: string) {
+    this._username = value;
+    this.getUser();
+    this.getRepos();
+  }
 
   constructor(private github: GithubService, private router: Router) {
   }
@@ -32,9 +43,4 @@ export class GithubComponent implements OnInit {
     })
   }
 
-  search(event) {
-    this.username = event.target.value;
-    this.getUser();
-    this.getRepos();
-  }
 }
