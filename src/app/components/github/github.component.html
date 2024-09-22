@@ -2,38 +2,65 @@
   <div class="col-md-12">
     <form>
       <div class="form-group mt-2">
-        <input type="text" class="form-control" [(ngModel)]="username" name="username" placeholder="Github Username...">
+        <input
+          type="text"
+          class="form-control"
+          [formControl]="searchTerm"
+          name="username"
+          placeholder="Github Username..."
+        />
       </div>
     </form>
   </div>
 </div>
-<div *ngIf='user && username; else NoUser' class="mt-1">
+<div *ngIf="user() && searchTerm.value; else NoUser" class="mt-1">
   <div class="card">
     <h3 class="card-header">
-      <strong>{{user.name}}</strong>
+      <strong>{{ user().name }}</strong>
     </h3>
     <div class="card-body">
       <div class="row">
         <div class="col-md-4">
-          <a href="{{user.html_url}}">
-            <img src="{{user.avatar_url}}" class="img-thumbnail github-avatar">
+          <a href="{{ user().html_url }}">
+            <img
+              src="{{ user().avatar_url }}"
+              class="img-thumbnail github-avatar"
+            />
           </a>
         </div>
         <div class="col-md-8">
           <div class="stats">
-            <span class="badge badge-primary">{{user.public_repos}} Public Repos</span>
-            <span class="badge badge-secondary">{{user.public_gists}} Public Gists</span>
+            <span class="badge badge-primary"
+              >{{ user().public_repos }} Public Repos</span
+            >
+            <span class="badge badge-secondary"
+              >{{ user().public_gists }} Public Gists</span
+            >
             <span class="badge badge-success click">
-              <a [routerLink]="[username, 'followers']" class="fol">{{user.followers}} Followers</a>
+              <a [routerLink]="[user().login, 'followers']" class="fol"
+                >{{ user().followers }} Followers</a
+              >
             </span>
-            <span class="badge badge-info">{{user.following}} Following</span>
+            <span class="badge badge-info"
+              >{{ user().following }} Following</span
+            >
           </div>
           <div class="list-group mt-3">
-            <div class="list-group-item"><strong>Username: </strong>{{user.login}}</div>
-            <div class="list-group-item"><strong>Location: </strong>{{user.location}}</div>
-            <div class="list-group-item"><strong>Email: </strong>{{user.email}}</div>
-            <div class="list-group-item"><strong>Blog: </strong>{{user.blog}}</div>
-            <div class="list-group-item"><strong>Member Since: </strong>{{user.created_at | date}}</div>
+            <div class="list-group-item">
+              <strong>Username: </strong>{{ user().login }}
+            </div>
+            <div class="list-group-item">
+              <strong>Location: </strong>{{ user().location }}
+            </div>
+            <div class="list-group-item">
+              <strong>Email: </strong>{{ user().email }}
+            </div>
+            <div class="list-group-item">
+              <strong>Blog: </strong>{{ user().blog }}
+            </div>
+            <div class="list-group-item">
+              <strong>Member Since: </strong>{{ user().created_at | date }}
+            </div>
           </div>
         </div>
       </div>
@@ -44,17 +71,25 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-12">
-          <div *ngFor="let repo of repos">
+          <div *ngFor="let repo of repos()">
             <div class="row">
               <div class="col-md-9">
-                <h5><a href="{{repo.html_url}}" target="_blank">{{repo.name}}</a></h5>
+                <h5>
+                  <a href="{{ repo.html_url }}" target="_blank">{{
+                    repo.name
+                  }}</a>
+                </h5>
               </div>
               <div class="col-md-3">
-                <span class="badge badge-secondary">{{repo.watchers}} Watchers</span>
-                <span class="badge badge-primary">{{repo.forks}} Forkers</span>
+                <span class="badge badge-secondary"
+                  >{{ repo.watchers }} Watchers</span
+                >
+                <span class="badge badge-primary"
+                  >{{ repo.forks }} Forkers</span
+                >
               </div>
             </div>
-            <hr>
+            <hr />
           </div>
         </div>
       </div>
@@ -62,6 +97,4 @@
   </div>
 </div>
 
-
-<ng-template #NoUser>
-</ng-template>
+<ng-template #NoUser> </ng-template>

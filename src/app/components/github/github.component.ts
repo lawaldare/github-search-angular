@@ -1,46 +1,40 @@
-import { GithubService } from './../../services/github.service';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router'
+import { GithubService } from "./../../services/github.service";
+import { Component, inject, OnInit, signal } from "@angular/core";
+import { FormControl } from "@angular/forms";
+import { forkJoin, of } from "rxjs";
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  mergeMap,
+} from "rxjs/operators";
 
 @Component({
-  selector: 'app-github',
-  templateUrl: './github.component.html',
-  styleUrls: ['./github.component.scss']
+  selector: "app-github",
+  templateUrl: "./github.component.html",
+  styleUrls: ["./github.component.scss"],
 })
 export class GithubComponent implements OnInit {
-
-  user: any;
-  repos: any;
-
-  private _username: string;
-
-  get username(): string {
-    return this._username;
-  }
-
-  set username(value: string) {
-    this._username = value;
-    this.getUser();
-    this.getRepos();
-  }
-
-  constructor(private github: GithubService, private router: Router) {
-  }
+  public user = signal<any>({});
+  public repos = signal<any>([]);
+  private readonly github = inject(GithubService);
+  public searchTerm = new FormControl("");
 
   ngOnInit() {
-
+    this.searchTerm.valueChanges
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        mergeMap((term: string) =>
+          forkJoin([this.github.getUser(term), this.github.getRepos(term)])
+        ),
+        map(([user, repos]) => {
+          this.user.set(user);
+          this.repos.update(() => repos);
+        }),
+        catchError((error) => of(error))
+      )
+      .subscribe();
   }
-
-  getUser() {
-    this.github.getUser(this.username).subscribe(user => {
-      this.user = user;
-    })
-  }
-
-  getRepos() {
-    this.github.getRepos(this.username).subscribe(repos => {
-      this.repos = repos;
-    })
-  }
-
 }
