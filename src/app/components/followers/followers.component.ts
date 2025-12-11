@@ -5,9 +5,10 @@ import { of } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 
 @Component({
-  selector: "app-followers",
-  templateUrl: "./followers.component.html",
-  styleUrls: ["./followers.component.scss"],
+    selector: "app-followers",
+    templateUrl: "./followers.component.html",
+    styleUrls: ["./followers.component.scss"],
+    standalone: false
 })
 export class FollowersComponent {
   private readonly github = inject(GithubService);

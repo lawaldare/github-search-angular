@@ -11,9 +11,10 @@ import {
 } from "rxjs/operators";
 
 @Component({
-  selector: "app-github",
-  templateUrl: "./github.component.html",
-  styleUrls: ["./github.component.scss"],
+    selector: "app-github",
+    templateUrl: "./github.component.html",
+    styleUrls: ["./github.component.scss"],
+    standalone: false
 })
 export class GithubComponent implements OnInit {
   public user = signal<any>({});
