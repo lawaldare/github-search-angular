@@ -8,13 +8,14 @@ import {
   distinctUntilChanged,
   map,
   mergeMap,
+  switchMap,
 } from "rxjs/operators";
 
 @Component({
-    selector: "app-github",
-    templateUrl: "./github.component.html",
-    styleUrls: ["./github.component.scss"],
-    standalone: false
+  selector: "app-github",
+  templateUrl: "./github.component.html",
+  styleUrls: ["./github.component.scss"],
+  standalone: false,
 })
 export class GithubComponent implements OnInit {
   public user = signal<any>({});
@@ -27,14 +28,20 @@ export class GithubComponent implements OnInit {
       .pipe(
         debounceTime(250),
         distinctUntilChanged(),
-        mergeMap((term: string) =>
-          forkJoin([this.github.getUser(term), this.github.getRepos(term)])
+        switchMap((term: string) =>
+          forkJoin([
+            this.github.getUser(term).pipe(catchError((err) => of(null))),
+            this.github.getRepos(term).pipe(catchError((err) => of(null))),
+          ])
         ),
         map(([user, repos]) => {
           this.user.set(user);
           this.repos.update(() => repos);
         }),
-        catchError((error) => of(error))
+        catchError((error) => {
+          console.error("Error fetching data:", error);
+          return of(error);
+        })
       )
       .subscribe();
   }
